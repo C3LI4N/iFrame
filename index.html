@@ -3,278 +3,449 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Studio Iframe Ultra</title>
-    
-    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
-
+    <title>AETHER | Private Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&display=swap');
+
         :root {
-            --bg: #000000;
-            --ui-panel: #111111;
-            --text: #ffffff;
+            --bg: #050505;
+            --ui: #0b0b0b;
+            --border: #191919;
             --accent: #ffffff;
-            --border: #222222;
         }
 
-        body, html {
-            margin: 0; padding: 0;
-            height: 100%; width: 100%;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            overflow: hidden;
+        * {
+            box-sizing: border-box;
         }
 
-        /* Zone de Rendu (Le Lecteur) */
-        #viewer-container {
-            width: 100vw;
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        #app {
             height: 100vh;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #000;
-            z-index: 1;
-        }
-
-        #viewer-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Sidebar Coulissante */
-        .sidebar {
-            position: fixed;
-            top: 0; left: -350px;
-            width: 320px;
-            height: 100%;
-            background: var(--ui-panel);
-            border-right: 1px solid var(--border);
-            z-index: 1000; /* Toujours au dessus sauf en plein écran */
-            transition: transform 0.3s ease;
-            padding: 30px 20px;
-            display: flex;
             flex-direction: column;
-            box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+            background: radial-gradient(circle at top, rgba(255,255,255,0.04) 0, transparent 55%) #050505;
         }
 
-        .sidebar.open { transform: translateX(350px); }
-
-        /* Inputs & Boutons */
-        textarea {
-            flex: 1;
-            background: #000;
-            border: 1px solid var(--border);
-            color: #aaa;
-            padding: 15px;
-            font-family: monospace;
-            font-size: 12px;
-            border-radius: 4px;
-            resize: none;
-            outline: none;
-            margin-bottom: 20px;
+        .ambient-glow {
+            position: absolute;
+            inset: -20%;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+            pointer-events: none;
+            filter: blur(22px);
+            opacity: 0.8;
         }
 
-        .btn-main {
-            background: var(--accent);
-            color: #000;
+        .border-luxury {
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow:
+                0 0 0 1px rgba(0,0,0,0.9),
+                0 18px 60px rgba(0,0,0,0.75);
+        }
+
+        .nav-item {
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #5a5a5a;
+            transition: color 0.35s ease, opacity 0.35s ease, transform 0.35s ease;
+        }
+        .nav-item:hover {
+            color: #ffffff;
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        .chip {
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: radial-gradient(circle at top left, rgba(255,255,255,0.12), transparent 60%);
+            font-size: 9px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #a0a0a0;
+        }
+
+        .panel-transition {
+            transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        iframe {
             border: none;
-            padding: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 4px;
-            margin-bottom: 10px;
+            background: black;
         }
 
-        .btn-secondary {
+        body.cinema-mode header,
+        body.cinema-mode aside {
+            transform: translateY(-110%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        body.cinema-mode main {
+            padding: 0 !important;
+        }
+
+        /* Scrollbar minimal */
+        .scrollbar-min::-webkit-scrollbar {
+            width: 4px;
+        }
+        .scrollbar-min::-webkit-scrollbar-track {
             background: transparent;
-            color: #666;
-            border: 1px solid #333;
-            padding: 8px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 12px;
+        }
+        .scrollbar-min::-webkit-scrollbar-thumb {
+            background: #202020;
         }
 
-        /* Contrôles Flottants */
-        .top-left-ctrl {
-            position: fixed;
-            top: 20px; left: 20px;
-            z-index: 1001;
+        /* Side panel */
+        #sidePanel {
+            backdrop-filter: blur(18px);
+            background: linear-gradient(135deg, rgba(5,5,5,0.98), rgba(5,5,5,0.94));
         }
 
-        .bottom-right-ctrl {
-            position: fixed;
-            bottom: 20px; right: 20px;
-            display: flex;
-            gap: 15px;
-            z-index: 1001;
-            background: rgba(0,0,0,0.5);
-            padding: 10px;
-            border-radius: 12px;
-            backdrop-filter: blur(5px);
+        textarea::placeholder {
+            color: #444;
         }
 
-        .icon-btn {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            opacity: 0.6;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
+        @media (max-width: 900px) {
+            aside {
+                display: none;
+            }
         }
-
-        .icon-btn:hover { opacity: 1; }
-
-        /* Masquer les contrôles en mode plein écran natif */
-        :fullscreen .top-left-ctrl, :fullscreen .bottom-right-ctrl { display: none; }
-        :-webkit-full-screen .top-left-ctrl, :-webkit-full-screen .bottom-right-ctrl { display: none; }
-
-google-cast-launcher {
-    display: block !important;
-    width: 32px !important;
-    height: 32px !important;
-    cursor: pointer;
-    /* Supprime la couleur grise pour laisser l'icône native apparaître */
-    background-color: transparent; 
-
     </style>
 </head>
 <body>
+<div id="app">
 
-    <div class="top-left-ctrl">
-        <button class="icon-btn" onclick="toggleMenu()">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    <!-- HEADER -->
+    <header class="h-16 border-b border-[#181818] flex justify-between items-center px-8 z-40 bg-gradient-to-b from-black/60 to-transparent backdrop-blur-md">
+        <div class="flex items-center gap-6">
+            <div class="flex flex-col leading-none">
+                <span class="tracking-[0.5em] text-[11px] font-light">AETHER</span>
+                <span class="text-[8px] tracking-[0.4em] text-[#555] uppercase">Private Collection</span>
+            </div>
+            <div class="h-6 w-px bg-gradient-to-b from-transparent via-[#2b2b2b] to-transparent"></div>
+            <div class="flex items-center gap-3 text-[10px] text-[#777]">
+                <span id="clock" class="tracking-[0.25em] font-extralight italic">00:00:00</span>
+                <span class="h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.8)]"></span>
+                <span class="uppercase tracking-[0.22em] text-[9px] text-[#666]">Ready</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <button onclick="window.open('https://wfty.link', '_blank')" class="nav-item">WFTY</button>
+            <button onclick="window.open('https://frembed.one', '_blank')" class="nav-item">FREMBED</button>
+            <button onclick="togglePanel()" class="nav-item text-white border border-[#333] px-4 py-1 rounded-full bg-white/0 hover:bg-white hover:text-black">
+                Injecter
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="flex-1 flex overflow-hidden panel-transition px-6 pb-6 pt-4">
+
+        <!-- HISTORIQUE -->
+        <aside class="w-64 border-r border-[#181818] flex flex-col pr-4 py-3">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-[9px] tracking-[0.28em] text-[#6b6b6b] uppercase">Recent Sessions</h2>
+                <span class="chip text-[8px]">Timeline</span>
+            </div>
+
+            <div id="history" class="flex-1 overflow-y-auto space-y-3 pr-1 scrollbar-min text-[10px]"></div>
+
+            <button onclick="clearHistory()" class="mt-4 text-[9px] text-[#2c2c2c] hover:text-red-500 uppercase tracking-[0.28em] text-left">
+                Clear Archive
+            </button>
+        </aside>
+
+        <!-- PLAYER AREA -->
+        <section class="flex-1 flex flex-col pl-6 relative">
+            <div class="ambient-glow"></div>
+
+            <!-- Top bar player -->
+            <div class="flex justify-between items-center mb-4 relative z-10">
+                <div class="flex flex-col gap-1">
+                    <div id="status" class="text-[9px] text-[#888] uppercase tracking-[0.22em]">
+                        Ready / Empty
+                    </div>
+                    <div class="flex gap-2 text-[9px] text-[#555]">
+                        <span class="uppercase tracking-[0.18em]">Engine •</span>
+                        <span class="uppercase tracking-[0.18em]">Safe Sandbox</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 items-center">
+                    <button onclick="toggleCinema()" class="nav-item !text-[9px]" title="Mode Cinéma">
+                        Cinéma
+                    </button>
+                    <button onclick="toggleFullscreen()" class="nav-item !text-[9px]">
+                        Fullscreen
+                    </button>
+                    <button onclick="resetPlayer()" class="nav-item !text-[9px] text-red-600">
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- PLAYER CARD -->
+            <div class="flex-1 flex items-stretch relative z-10">
+                <div id="player-container" class="flex-1 rounded-[14px] border-luxury overflow-hidden bg-gradient-to-b from-black to-black/90 relative">
+                    <div id="placeholder" class="absolute inset-0 flex flex-col items-center justify-center gap-3 opacity-30 select-none">
+                        <span class="text-[9px] tracking-[0.35em] uppercase text-[#777]">Aether Engine</span>
+                        <span class="text-[10px] tracking-[0.25em] uppercase text-[#444]">
+                            Inject any iframe / url
+                        </span>
+                    </div>
+                    <div id="display-area" class="w-full h-full"></div>
+                </div>
+
+                <!-- Small side info -->
+                <div class="w-52 ml-4 hidden xl:flex flex-col text-[9px] text-[#777] gap-4">
+                    <div class="border border-[#181818] rounded-[10px] px-4 py-3 bg-black/40">
+                        <div class="uppercase tracking-[0.22em] text-[8px] text-[#666] mb-2">Notes</div>
+                        <p class="leading-relaxed">
+                            Safe-Sandbox : les redirections automatiques sont neutralisées.
+                            Seules les actions déclenchées par ton clic sont autorisées.
+                        </p>
+                    </div>
+                    <div class="border border-[#181818] rounded-[10px] px-4 py-3 bg-black/40">
+                        <div class="uppercase tracking-[0.22em] text-[8px] text-[#666] mb-2">Shortcuts</div>
+                        <p class="leading-relaxed">
+                            Coller une iframe ou une URL, <span class="text-[#bbb]">Load Stream</span>, puis basculer en
+                            <span class="text-[#bbb]">Cinéma</span> ou <span class="text-[#bbb]">Fullscreen</span>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- SIDE PANEL -->
+    <div id="sidePanel" class="fixed inset-y-0 right-0 w-[420px] border-l border-[#202020] z-[100] translate-x-full panel-transition p-10 flex flex-col">
+        <div class="flex justify-between items-center mb-10">
+            <div class="flex flex-col gap-1">
+                <span class="text-[10px] tracking-[0.35em] uppercase font-semibold">Input Source</span>
+                <span class="text-[9px] tracking-[0.18em] text-[#555] uppercase">Iframe / direct URL</span>
+            </div>
+            <button onclick="togglePanel()" class="text-white text-xl font-thin leading-none">
+                ✕
+            </button>
+        </div>
+
+        <textarea
+            id="mainInput"
+            class="w-full h-40 bg-black/40 border border-[#242424] rounded-[10px] p-4 text-[12px] text-white focus:border-white outline-none transition-all duration-500 font-light resize-none"
+            placeholder="<iframe src='https://…' allow='…'></iframe> ou https://…">
+        </textarea>
+
+        <button
+            onclick="processInput()"
+            class="mt-6 bg-white text-black py-3 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-gray-200 transition-colors rounded-full">
+            Load Stream
         </button>
+
+        <div class="mt-8 text-[9px] text-[#666] leading-relaxed tracking-[0.18em] uppercase">
+            Safe-Sandbox Enabled : les redirections hors de cette page sont bloquées.
+            Le contenu ne peut changer de contexte qu'à partir d'une action utilisateur.
+        </div>
     </div>
 
-    <div class="sidebar" id="sidebar">
-        <h3 style="margin-top:0">Configuration</h3>
-        <textarea id="codeInput" placeholder="Collez votre code iframe ici..."></textarea>
-        <button class="btn-main" onclick="applyCode()">METTRE À JOUR</button>
-        <button class="btn-secondary" onclick="clearCode()">VIDER LE CODE</button>
-        <p style="font-size: 10px; color: #444; margin-top: 20px;">Le code est sauvegardé automatiquement sur ce navigateur.</p>
-    </div>
+</div>
 
-    <div id="viewer-container">
-        <div id="placeholder" style="color: #333;">Aucun contenu chargé</div>
-    </div>
+<script>
+    /* CLOCK */
+    setInterval(() => {
+        const el = document.getElementById('clock');
+        if (!el) return;
+        el.textContent = new Date().toLocaleTimeString('fr-FR');
+    }, 1000);
 
-    <div class="bottom-right-ctrl">
-        <google-cast-launcher id="castbutton"></google-cast-launcher>
+    /* PANEL */
+    function togglePanel() {
+        const p = document.getElementById('sidePanel');
+        p.classList.toggle('translate-x-full');
+        if (!p.classList.contains('translate-x-full')) {
+            setTimeout(() => document.getElementById('mainInput').focus(), 250);
+        }
+    }
 
-        <button class="icon-btn" onclick="goFullscreen()" title="Plein écran">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
-        </button>
-    </div>
+    /* CINEMA MODE */
+    function toggleCinema() {
+        document.body.classList.toggle('cinema-mode');
+    }
 
-    <script>
-       // Remplace toute la partie Chromecast par ceci
-window['__onGCastApiAvailable'] = function(isAvailable) {
-    if (isAvailable) {
-        const context = cast.framework.CastContext.getInstance();
-        context.setOptions({
-            receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-            autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+    /* PROCESS INPUT */
+    function processInput() {
+        let input = document.getElementById('mainInput').value.trim();
+        if (!input) return;
+
+        let finalSrc = "";
+
+        if (input.includes('<iframe')) {
+            const match = input.match(/src=["']([^"']+)["']/);
+            finalSrc = match ? match[1] : "";
+        } else {
+            finalSrc = input;
+        }
+
+        if (finalSrc) {
+            injectPlayer(finalSrc);
+            addToHistory(input);
+            togglePanel();
+        }
+    }
+
+    /* INJECT PLAYER + SANDBOX */
+    function injectPlayer(src) {
+        const container = document.getElementById('display-area');
+        document.getElementById('placeholder').style.display = 'none';
+
+        const frame = document.createElement('iframe');
+        frame.id = "player-frame";
+        frame.src = src;
+        frame.className = "w-full h-full";
+        frame.setAttribute('allowfullscreen', 'true');
+        frame.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
+
+        // Sandbox protecteur, mais on laisse la top-navigation par action utilisateur
+        frame.setAttribute(
+            'sandbox',
+            'allow-forms allow-scripts allow-same-origin allow-presentation allow-top-navigation-by-user-activation'
+        );
+
+        container.innerHTML = "";
+        container.appendChild(frame);
+
+        try {
+            const host = new URL(src).hostname;
+            document.getElementById('status').innerText = "Active / " + host;
+        } catch (e) {
+            document.getElementById('status').innerText = "Active / Custom Source";
+        }
+    }
+
+    /* RESET */
+    function resetPlayer() {
+        document.getElementById('display-area').innerHTML = "";
+        document.getElementById('placeholder').style.display = 'flex';
+        document.getElementById('status').innerText = "Ready / Empty";
+
+        if (document.body.classList.contains('cinema-mode')) {
+            toggleCinema();
+        }
+    }
+
+    /* FULLSCREEN GLOBAL (#app) */
+    function toggleFullscreen() {
+        const app = document.getElementById('app');
+        const doc = document;
+
+        if (!app) return;
+
+        // Si déjà en plein écran -> on quitte
+        if (
+            doc.fullscreenElement ||
+            doc.webkitFullscreenElement ||
+            doc.mozFullScreenElement ||
+            doc.msFullscreenElement
+        ) {
+            if (doc.exitFullscreen) doc.exitFullscreen();
+            else if (doc.webkitExitFullscreen) doc.webkitExitFullscreen();
+            else if (doc.mozCancelFullScreen) doc.mozCancelFullScreen();
+            else if (doc.msExitFullscreen) doc.msExitFullscreen();
+            return;
+        }
+
+        // Sinon on demande le fullscreen sur tout le container
+        if (app.requestFullscreen) app.requestFullscreen();
+        else if (app.webkitRequestFullscreen) app.webkitRequestFullscreen();
+        else if (app.mozRequestFullScreen) app.mozRequestFullScreen();
+        else if (app.msRequestFullscreen) app.msRequestFullscreen();
+    }
+
+    /* HISTORY MANAGER */
+    let historyData = JSON.parse(localStorage.getItem('aether_v6_history') || '[]');
+
+    function addToHistory(code) {
+        if (historyData.length > 0 && historyData[0].code === code) return;
+
+        const timestamp = new Date().toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit'
         });
-        console.log("Chromecast : Prêt et initialisé");
+
+        historyData.unshift({ code, time: timestamp });
+        if (historyData.length > 24) historyData.pop();
+
+        localStorage.setItem('aether_v6_history', JSON.stringify(historyData));
+        renderHistory();
     }
-};
 
-        function initializeCastApi() {
-            cast.framework.CastContext.getInstance().setOptions({
-                receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-                autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
-            });
-        };
+    function renderHistory() {
+        const container = document.getElementById('history');
+        if (!container) return;
+        container.innerHTML = "";
 
-        // Gestion de la Sidebar
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
+        historyData.forEach((item, index) => {
+            let name = "Unknown Source";
+            try {
+                const src = item.code.includes('<iframe')
+                    ? item.code.match(/src=["']([^"']+)["']/)[1]
+                    : item.code;
+                name = new URL(src).hostname.replace('www.', '');
+            } catch (e) {}
 
-        // Appliquer le code et sauvegarder
-        function applyCode() {
-            const code = document.getElementById('codeInput').value;
-            const container = document.getElementById('viewer-container');
-            
-            if (code.trim() !== "") {
-                container.innerHTML = code;
-                const iframe = container.querySelector('iframe');
-                if (iframe) {
-                    iframe.style.width = "100%";
-                    iframe.style.height = "100%";
-                }
-                localStorage.setItem('savedIframeCode', code);
-                toggleMenu();
-            }
-        }
+            const div = document.createElement('div');
+            div.className =
+                "group border-b border-[#151515] pb-2 cursor-pointer hover:border-[#333] transition-all";
 
-        // Vider le code
-        function clearCode() {
-            document.getElementById('codeInput').value = "";
-            document.getElementById('viewer-container').innerHTML = '<div style="color: #333;">Aucun contenu chargé</div>';
-            localStorage.removeItem('savedIframeCode');
-        }
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-1">
+                    <span onclick="loadHistory(${index})"
+                          class="text-[10px] text-[#777] group-hover:text-white transition-colors uppercase tracking-[0.22em]">
+                        ${name}
+                    </span>
+                    <span onclick="deleteHistory(${index})"
+                          class="text-[8px] text-[#333] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                        Remove
+                    </span>
+                </div>
+                <div class="text-[8px] text-[#444] font-mono tracking-[0.18em]">
+                    ${item.time}
+                </div>
+            `;
 
-        // Plein écran (Cible uniquement le container pour cacher l'UI)
-        function goFullscreen() {
-            const elem = document.getElementById('viewer-container');
-            if (elem.requestFullscreen) elem.requestFullscreen();
-            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-        }
-
-        // Charger le code sauvegardé au démarrage
-        window.onload = function() {
-            const savedCode = localStorage.getItem('savedIframeCode');
-            if (savedCode) {
-                document.getElementById('codeInput').value = savedCode;
-                applyCode();
-            }
-        }
-
-        // Fermer le menu avec Echap
-        document.addEventListener('keydown', (e) => {
-            if (e.key === "Escape") document.getElementById('sidebar').classList.remove('open');
+            container.appendChild(div);
         });
-// Variable pour empêcher la boucle d'actualisation
-let isInitialLoad = true;
-
-function applyCode() {
-    const code = document.getElementById('codeInput').value;
-    const container = document.getElementById('viewer-container');
-    
-    if (code.trim() !== "") {
-        // On ne remplace le HTML que si le code a vraiment changé
-        if (container.innerHTML !== code) {
-            container.innerHTML = code;
-            const iframe = container.querySelector('iframe');
-            if (iframe) {
-                iframe.style.width = "100%";
-                iframe.style.height = "100%";
-            }
-        }
-        
-        localStorage.setItem('savedIframeCode', code);
-        
-        // Ferme le menu seulement si ce n'est pas le chargement initial
-        if (!isInitialLoad) {
-            toggleMenu();
-        }
-        isInitialLoad = false;
     }
-}
 
-// Remplace ton window.onload par celui-ci
-window.addEventListener('load', function() {
-    const savedCode = localStorage.getItem('savedIframeCode');
-    if (savedCode) {
-        document.getElementById('codeInput').value = savedCode;
-        applyCode();
+    function loadHistory(index) {
+        document.getElementById('mainInput').value = historyData[index].code;
+        processInput();
     }
-});
-    </script>
+
+    function deleteHistory(index) {
+        historyData.splice(index, 1);
+        localStorage.setItem('aether_v6_history', JSON.stringify(historyData));
+        renderHistory();
+    }
+
+    function clearHistory() {
+        if (!confirm("Wipe all history data ?")) return;
+        historyData = [];
+        localStorage.removeItem('aether_v6_history');
+        renderHistory();
+    }
+
+    renderHistory();
+</script>
+
 </body>
 </html>
