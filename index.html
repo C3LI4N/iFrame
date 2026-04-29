@@ -1,451 +1,74 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHER | Private Collection</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&display=swap');
-
-        :root {
-            --bg: #050505;
-            --ui: #0b0b0b;
-            --border: #191919;
-            --accent: #ffffff;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            background-color: var(--bg);
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-        }
-
-        #app {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: radial-gradient(circle at top, rgba(255,255,255,0.04) 0, transparent 55%) #050505;
-        }
-
-        .ambient-glow {
-            position: absolute;
-            inset: -20%;
-            background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
-            pointer-events: none;
-            filter: blur(22px);
-            opacity: 0.8;
-        }
-
-        .border-luxury {
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow:
-                0 0 0 1px rgba(0,0,0,0.9),
-                0 18px 60px rgba(0,0,0,0.75);
-        }
-
-        .nav-item {
-            font-size: 10px;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: #5a5a5a;
-            transition: color 0.35s ease, opacity 0.35s ease, transform 0.35s ease;
-        }
-        .nav-item:hover {
-            color: #ffffff;
-            opacity: 0.95;
-            transform: translateY(-1px);
-        }
-
-        .chip {
-            padding: 4px 10px;
-            border-radius: 999px;
-            border: 1px solid rgba(255,255,255,0.06);
-            background: radial-gradient(circle at top left, rgba(255,255,255,0.12), transparent 60%);
-            font-size: 9px;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: #a0a0a0;
-        }
-
-        .panel-transition {
-            transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        iframe {
-            border: none;
-            background: black;
-        }
-
-        body.cinema-mode header,
-        body.cinema-mode aside {
-            transform: translateY(-110%);
-            opacity: 0;
-            pointer-events: none;
-        }
-        body.cinema-mode main {
-            padding: 0 !important;
-        }
-
-        /* Scrollbar minimal */
-        .scrollbar-min::-webkit-scrollbar {
-            width: 4px;
-        }
-        .scrollbar-min::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .scrollbar-min::-webkit-scrollbar-thumb {
-            background: #202020;
-        }
-
-        /* Side panel */
-        #sidePanel {
-            backdrop-filter: blur(18px);
-            background: linear-gradient(135deg, rgba(5,5,5,0.98), rgba(5,5,5,0.94));
-        }
-
-        textarea::placeholder {
-            color: #444;
-        }
-
-        @media (max-width: 900px) {
-            aside {
-                display: none;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AETHER | Minimal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;600&display=swap');
+    body { font-family: 'Geist', sans-serif; background: #0a0a0a; color: #ededed; }
+    .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); }
+    #player-container:-webkit-full-screen { width: 100%; height: 100%; background: black; border-radius: 0; }
+    #player-container:fullscreen { width: 100%; height: 100%; background: black; border-radius: 0; }
+</style>
 </head>
-<body>
-<div id="app">
+<body class="h-screen flex flex-col p-4 md:p-6 gap-6">
 
-    <!-- HEADER -->
-    <header class="h-16 border-b border-[#181818] flex justify-between items-center px-8 z-40 bg-gradient-to-b from-black/60 to-transparent backdrop-blur-md">
+    <header class="flex items-center justify-between">
         <div class="flex items-center gap-6">
-            <div class="flex flex-col leading-none">
-                <span class="tracking-[0.5em] text-[11px] font-light">AETHER</span>
-                <span class="text-[8px] tracking-[0.4em] text-[#555] uppercase">Private Collection</span>
-            </div>
-            <div class="h-6 w-px bg-gradient-to-b from-transparent via-[#2b2b2b] to-transparent"></div>
-            <div class="flex items-center gap-3 text-[10px] text-[#777]">
-                <span id="clock" class="tracking-[0.25em] font-extralight italic">00:00:00</span>
-                <span class="h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.8)]"></span>
-                <span class="uppercase tracking-[0.22em] text-[9px] text-[#666]">Ready</span>
-            </div>
+            <h1 class="text-xs font-semibold tracking-[0.3em] uppercase opacity-70">Aether</h1>
+            <div id="clock" class="text-[9px] font-mono tracking-widest opacity-40">00:00:00</div>
         </div>
-
-        <div class="flex items-center gap-6">
-            <button onclick="window.open('https://wfty.link', '_blank')" class="nav-item">WFTY</button>
-            <button onclick="window.open('https://frembed.one', '_blank')" class="nav-item">FREMBED</button>
-            <button onclick="togglePanel()" class="nav-item text-white border border-[#333] px-4 py-1 rounded-full bg-white/0 hover:bg-white hover:text-black">
-                Injecter
-            </button>
+        <div class="flex gap-4">
+            <button onclick="togglePanel()" class="text-[9px] tracking-widest uppercase hover:text-white opacity-60 transition">Injecter</button>
         </div>
     </header>
 
-    <!-- MAIN -->
-    <main class="flex-1 flex overflow-hidden panel-transition px-6 pb-6 pt-4">
-
-        <!-- HISTORIQUE -->
-        <aside class="w-64 border-r border-[#181818] flex flex-col pr-4 py-3">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-[9px] tracking-[0.28em] text-[#6b6b6b] uppercase">Recent Sessions</h2>
-                <span class="chip text-[8px]">Timeline</span>
+    <main class="flex-1 flex gap-6 overflow-hidden">
+        <section id="player-container" class="flex-1 relative group bg-black rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+            <div id="placeholder" class="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-30 text-[9px] tracking-[0.5em] uppercase">
+                <span>Engine</span>
+                <span id="status" class="opacity-50">Ready</span>
             </div>
+            <div id="display-area" class="w-full h-full"></div>
 
-            <div id="history" class="flex-1 overflow-y-auto space-y-3 pr-1 scrollbar-min text-[10px]"></div>
-
-            <button onclick="clearHistory()" class="mt-4 text-[9px] text-[#2c2c2c] hover:text-red-500 uppercase tracking-[0.28em] text-left">
-                Clear Archive
-            </button>
-        </aside>
-
-        <!-- PLAYER AREA -->
-        <section class="flex-1 flex flex-col pl-6 relative">
-            <div class="ambient-glow"></div>
-
-            <!-- Top bar player -->
-            <div class="flex justify-between items-center mb-4 relative z-10">
-                <div class="flex flex-col gap-1">
-                    <div id="status" class="text-[9px] text-[#888] uppercase tracking-[0.22em]">
-                        Ready / Empty
-                    </div>
-                    <div class="flex gap-2 text-[9px] text-[#555]">
-                        <span class="uppercase tracking-[0.18em]">Engine •</span>
-                        <span class="uppercase tracking-[0.18em]">Safe Sandbox</span>
-                    </div>
-                </div>
-
-                <div class="flex gap-4 items-center">
-                    <button onclick="toggleCinema()" class="nav-item !text-[9px]" title="Mode Cinéma">
-                        Cinéma
-                    </button>
-                    <button onclick="toggleFullscreen()" class="nav-item !text-[9px]">
-                        Fullscreen
-                    </button>
-                    <button onclick="resetPlayer()" class="nav-item !text-[9px] text-red-600">
-                        Reset
-                    </button>
-                </div>
+            <div class="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                <button onclick="document.getElementById('player-container').requestFullscreen()" class="glass px-4 py-2 rounded-full text-[9px] uppercase tracking-widest">Fullscreen</button>
+                <button onclick="resetPlayer()" class="glass px-4 py-2 rounded-full text-[9px] uppercase tracking-widest text-red-400/80">Reset</button>
             </div>
-
-            <!-- PLAYER CARD -->
-            <div class="flex-1 flex items-stretch relative z-10">
-                <div id="player-container" class="flex-1 rounded-[14px] border-luxury overflow-hidden bg-gradient-to-b from-black to-black/90 relative">
-                    <div id="placeholder" class="absolute inset-0 flex flex-col items-center justify-center gap-3 opacity-30 select-none">
-                        <span class="text-[9px] tracking-[0.35em] uppercase text-[#777]">Aether Engine</span>
-                        <span class="text-[10px] tracking-[0.25em] uppercase text-[#444]">
-                            Inject any iframe / url
-                        </span>
-                    </div>
-                    <div id="display-area" class="w-full h-full"></div>
-                </div>
-
-                <!-- Small side info -->
-                <div class="w-52 ml-4 hidden xl:flex flex-col text-[9px] text-[#777] gap-4">
-                    <div class="border border-[#181818] rounded-[10px] px-4 py-3 bg-black/40">
-                        <div class="uppercase tracking-[0.22em] text-[8px] text-[#666] mb-2">Notes</div>
-                        <p class="leading-relaxed">
-                            Safe-Sandbox : les redirections automatiques sont neutralisées.
-                            Seules les actions déclenchées par ton clic sont autorisées.
-                        </p>
-                    </div>
-                    <div class="border border-[#181818] rounded-[10px] px-4 py-3 bg-black/40">
-                        <div class="uppercase tracking-[0.22em] text-[8px] text-[#666] mb-2">Shortcuts</div>
-                        <p class="leading-relaxed">
-                            Coller une iframe ou une URL, <span class="text-[#bbb]">Load Stream</span>, puis basculer en
-                            <span class="text-[#bbb]">Cinéma</span> ou <span class="text-[#bbb]">Fullscreen</span>.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
         </section>
     </main>
 
-    <!-- SIDE PANEL -->
-    <div id="sidePanel" class="fixed inset-y-0 right-0 w-[420px] border-l border-[#202020] z-[100] translate-x-full panel-transition p-10 flex flex-col">
-        <div class="flex justify-between items-center mb-10">
-            <div class="flex flex-col gap-1">
-                <span class="text-[10px] tracking-[0.35em] uppercase font-semibold">Input Source</span>
-                <span class="text-[9px] tracking-[0.18em] text-[#555] uppercase">Iframe / direct URL</span>
-            </div>
-            <button onclick="togglePanel()" class="text-white text-xl font-thin leading-none">
-                ✕
-            </button>
+    <div id="sidePanel" class="fixed inset-y-0 right-0 w-full md:w-96 glass p-8 transform translate-x-full transition-transform z-50">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-[10px] uppercase tracking-widest opacity-60">Source Configuration</h2>
+            <button onclick="togglePanel()" class="opacity-50 hover:opacity-100">✕</button>
         </div>
-
-        <textarea
-            id="mainInput"
-            class="w-full h-40 bg-black/40 border border-[#242424] rounded-[10px] p-4 text-[12px] text-white focus:border-white outline-none transition-all duration-500 font-light resize-none"
-            placeholder="<iframe src='https://…' allow='…'></iframe> ou https://…">
-        </textarea>
-
-        <button
-            onclick="processInput()"
-            class="mt-6 bg-white text-black py-3 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-gray-200 transition-colors rounded-full">
-            Load Stream
-        </button>
-
-        <div class="mt-8 text-[9px] text-[#666] leading-relaxed tracking-[0.18em] uppercase">
-            Safe-Sandbox Enabled : les redirections hors de cette page sont bloquées.
-            Le contenu ne peut changer de contexte qu'à partir d'une action utilisateur.
-        </div>
+        <textarea id="mainInput" class="w-full h-40 bg-white/5 border border-white/10 rounded-2xl p-4 text-xs focus:outline-none focus:border-white/30 transition" placeholder="URL ou iframe..."></textarea>
+        <button onclick="processInput()" class="w-full mt-4 bg-white text-black py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-white/90 transition">Charger le stream</button>
     </div>
 
-</div>
+    <script>
+        setInterval(() => document.getElementById('clock').textContent = new Date().toLocaleTimeString('fr-FR'), 1000);
+        function togglePanel() { document.getElementById('sidePanel').classList.toggle('translate-x-full'); }
 
-<script>
-    /* CLOCK */
-    setInterval(() => {
-        const el = document.getElementById('clock');
-        if (!el) return;
-        el.textContent = new Date().toLocaleTimeString('fr-FR');
-    }, 1000);
-
-    /* PANEL */
-    function togglePanel() {
-        const p = document.getElementById('sidePanel');
-        p.classList.toggle('translate-x-full');
-        if (!p.classList.contains('translate-x-full')) {
-            setTimeout(() => document.getElementById('mainInput').focus(), 250);
-        }
-    }
-
-    /* CINEMA MODE */
-    function toggleCinema() {
-        document.body.classList.toggle('cinema-mode');
-    }
-
-    /* PROCESS INPUT */
-    function processInput() {
-        let input = document.getElementById('mainInput').value.trim();
-        if (!input) return;
-
-        let finalSrc = "";
-
-        if (input.includes('<iframe')) {
-            const match = input.match(/src=["']([^"']+)["']/);
-            finalSrc = match ? match[1] : "";
-        } else {
-            finalSrc = input;
-        }
-
-        if (finalSrc) {
-            injectPlayer(finalSrc);
-            addToHistory(input);
+        function processInput() {
+            const input = document.getElementById('mainInput').value.trim();
+            if(!input) return;
+            const src = input.includes('<iframe') ? (input.match(/src=["']([^"']+)["']/)||[])[1] : input;
+            const container = document.getElementById('display-area');
+            document.getElementById('placeholder').style.display = 'none';
+            container.innerHTML = `<iframe src="${src}" class="w-full h-full" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+            document.getElementById('status').innerText = "Live";
             togglePanel();
         }
-    }
 
-    /* INJECT PLAYER + SANDBOX */
-    function injectPlayer(src) {
-        const container = document.getElementById('display-area');
-        document.getElementById('placeholder').style.display = 'none';
-
-        const frame = document.createElement('iframe');
-        frame.id = "player-frame";
-        frame.src = src;
-        frame.className = "w-full h-full";
-        frame.setAttribute('allowfullscreen', 'true');
-        frame.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
-
-        // Sandbox protecteur, mais on laisse la top-navigation par action utilisateur
-        frame.setAttribute(
-            'sandbox',
-            'allow-forms allow-scripts allow-same-origin allow-presentation allow-top-navigation-by-user-activation'
-        );
-
-        container.innerHTML = "";
-        container.appendChild(frame);
-
-        try {
-            const host = new URL(src).hostname;
-            document.getElementById('status').innerText = "Active / " + host;
-        } catch (e) {
-            document.getElementById('status').innerText = "Active / Custom Source";
+        function resetPlayer() {
+            document.getElementById('display-area').innerHTML = '';
+            document.getElementById('placeholder').style.display = 'flex';
+            document.getElementById('status').innerText = "Ready";
         }
-    }
-
-    /* RESET */
-    function resetPlayer() {
-        document.getElementById('display-area').innerHTML = "";
-        document.getElementById('placeholder').style.display = 'flex';
-        document.getElementById('status').innerText = "Ready / Empty";
-
-        if (document.body.classList.contains('cinema-mode')) {
-            toggleCinema();
-        }
-    }
-
-    /* FULLSCREEN GLOBAL (#app) */
-    function toggleFullscreen() {
-        const app = document.getElementById('app');
-        const doc = document;
-
-        if (!app) return;
-
-        // Si déjà en plein écran -> on quitte
-        if (
-            doc.fullscreenElement ||
-            doc.webkitFullscreenElement ||
-            doc.mozFullScreenElement ||
-            doc.msFullscreenElement
-        ) {
-            if (doc.exitFullscreen) doc.exitFullscreen();
-            else if (doc.webkitExitFullscreen) doc.webkitExitFullscreen();
-            else if (doc.mozCancelFullScreen) doc.mozCancelFullScreen();
-            else if (doc.msExitFullscreen) doc.msExitFullscreen();
-            return;
-        }
-
-        // Sinon on demande le fullscreen sur tout le container
-        if (app.requestFullscreen) app.requestFullscreen();
-        else if (app.webkitRequestFullscreen) app.webkitRequestFullscreen();
-        else if (app.mozRequestFullScreen) app.mozRequestFullScreen();
-        else if (app.msRequestFullscreen) app.msRequestFullscreen();
-    }
-
-    /* HISTORY MANAGER */
-    let historyData = JSON.parse(localStorage.getItem('aether_v6_history') || '[]');
-
-    function addToHistory(code) {
-        if (historyData.length > 0 && historyData[0].code === code) return;
-
-        const timestamp = new Date().toLocaleTimeString('fr-FR', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-
-        historyData.unshift({ code, time: timestamp });
-        if (historyData.length > 24) historyData.pop();
-
-        localStorage.setItem('aether_v6_history', JSON.stringify(historyData));
-        renderHistory();
-    }
-
-    function renderHistory() {
-        const container = document.getElementById('history');
-        if (!container) return;
-        container.innerHTML = "";
-
-        historyData.forEach((item, index) => {
-            let name = "Unknown Source";
-            try {
-                const src = item.code.includes('<iframe')
-                    ? item.code.match(/src=["']([^"']+)["']/)[1]
-                    : item.code;
-                name = new URL(src).hostname.replace('www.', '');
-            } catch (e) {}
-
-            const div = document.createElement('div');
-            div.className =
-                "group border-b border-[#151515] pb-2 cursor-pointer hover:border-[#333] transition-all";
-
-            div.innerHTML = `
-                <div class="flex justify-between items-start mb-1">
-                    <span onclick="loadHistory(${index})"
-                          class="text-[10px] text-[#777] group-hover:text-white transition-colors uppercase tracking-[0.22em]">
-                        ${name}
-                    </span>
-                    <span onclick="deleteHistory(${index})"
-                          class="text-[8px] text-[#333] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                        Remove
-                    </span>
-                </div>
-                <div class="text-[8px] text-[#444] font-mono tracking-[0.18em]">
-                    ${item.time}
-                </div>
-            `;
-
-            container.appendChild(div);
-        });
-    }
-
-    function loadHistory(index) {
-        document.getElementById('mainInput').value = historyData[index].code;
-        processInput();
-    }
-
-    function deleteHistory(index) {
-        historyData.splice(index, 1);
-        localStorage.setItem('aether_v6_history', JSON.stringify(historyData));
-        renderHistory();
-    }
-
-    function clearHistory() {
-        if (!confirm("Wipe all history data ?")) return;
-        historyData = [];
-        localStorage.removeItem('aether_v6_history');
-        renderHistory();
-    }
-
-    renderHistory();
-</script>
-
+    </script>
 </body>
 </html>
